@@ -156,8 +156,16 @@ class DeepseekV2MoE(nn.Module):
         config: PretrainedConfig,
         quant_config: Optional[QuantizationConfig] = None,
         prefix: str = "",
+        layer_id: int = None,
     ):
         super().__init__()
+        # ADDED:
+        self.layer_id = layer_id
+        if config.topk_list is None or isinstance(config.topk_list,list)==False or len(config.topk_list) < config.num_hidden_layers-1 or -1 in config.topk_list:
+            current_topk = config.num_experts_per_tok
+        else:
+            current_topk = config.topk_list[self.layer_id]
+        
         self.tp_size = get_tensor_model_parallel_world_size()
         self.routed_scaling_factor = config.routed_scaling_factor
         self.n_shared_experts = config.n_shared_experts
@@ -183,7 +191,7 @@ class DeepseekV2MoE(nn.Module):
         )
         self.experts = MoEImpl(
             num_experts=config.n_routed_experts,
-            top_k=config.num_experts_per_tok,
+            top_k=current_topk,
             hidden_size=config.hidden_size,
             intermediate_size=config.moe_intermediate_size,
             renormalize=config.norm_topk_prob,
@@ -221,7 +229,7 @@ class DeepseekV2MoE(nn.Module):
 
         if global_server_args_dict["enable_deepep_moe"]:
             self.num_experts = config.n_routed_experts
-            self.top_k = config.num_experts_per_tok
+            self.top_k = current_topk
             self.renormalize = config.norm_topk_prob
             self.topk_group = config.topk_group
             self.num_expert_group = config.n_group
@@ -1027,6 +1035,7 @@ class DeepseekV2DecoderLayer(nn.Module):
                 config=config,
                 quant_config=quant_config,
                 prefix=add_prefix("mlp", prefix),
+                layer_id=layer_id
             )
         else:
             self.mlp = DeepseekV2MLP(
