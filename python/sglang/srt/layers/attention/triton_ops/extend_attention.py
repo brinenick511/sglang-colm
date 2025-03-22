@@ -361,7 +361,7 @@ def extend_attention_fwd(
 
         num_warps = 4 if Lk <= 64 else 8
     # for _ in range(3): print(f'\n[YHQ]\tm,n,warps',BLOCK_M,BLOCK_N,num_warps)
-    BLOCK_M, BLOCK_N = (32, 32)
+    # BLOCK_M, BLOCK_N = (32, 32)
 
     sm_scale = sm_scale or 1.0 / (Lq**0.5)
     batch_size, head_num = qo_indptr.shape[0] - 1, q_extend.shape[1]
