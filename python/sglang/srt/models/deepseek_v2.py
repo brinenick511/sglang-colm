@@ -161,10 +161,11 @@ class DeepseekV2MoE(nn.Module):
         super().__init__()
         # ADDED:
         self.layer_id = layer_id
-        if config.topk_list is None or isinstance(config.topk_list,list)==False or len(config.topk_list) < config.num_hidden_layers-1 or -1 in config.topk_list:
+        if config.topk_list is None or isinstance(config.topk_list,list)==False or len(config.topk_list) < config.num_hidden_layers-1:
             current_topk = config.num_experts_per_tok
         else:
             current_topk = config.topk_list[self.layer_id]
+        print(f'{layer_id:02d} | {current_topk:02d}')
         
         self.tp_size = get_tensor_model_parallel_world_size()
         self.routed_scaling_factor = config.routed_scaling_factor

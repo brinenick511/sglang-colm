@@ -7,8 +7,6 @@ gpuid=0,1
 model_path="${HOME}/$(echo "$model_path" | sed 's|^.*models/|models/|')"
 
 
-
-
 # NCCL_P2P_DISABLE=1 \
 # NCCL_IB_DISABLE=1 \
 CUDA_VISIBLE_DEVICES=$gpuid \
@@ -22,4 +20,5 @@ python -m sglang.launch_server \
     --enable-p2p-check \
     --enable-torch-compile \
     --chunked-prefill-size 4096 \
+    --disable-cuda-graph \
 

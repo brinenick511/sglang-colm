@@ -5,7 +5,7 @@ import numpy as np
 
 def reset_config(args):
     if 'json' not in args.model_path:
-        model_path = os.path.join(args.model_path, 'config_copy.json')
+        model_path = os.path.join(args.model_path, 'config.json')
     else:
         model_path = args.model_path
     
@@ -14,8 +14,6 @@ def reset_config(args):
 
     with open(model_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
-    
-    
     
     with open(model_path, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=2)
@@ -27,7 +25,7 @@ def linear_distribution(vl,vr,num):
     return [vl+round((vr-vl)/num*i) for i in range(num)]
 
 def get_topk_list(args, num_hidden_layers):
-    num_hidden_layers -= 1
+    # num_hidden_layers -= 1
     
     if args.args is not None and isinstance(args.args, list)==False:
         args_list=parse_int_list(args.args)
@@ -53,7 +51,8 @@ def get_topk_list(args, num_hidden_layers):
 
 def read_json_and_print_topk(args):
     if 'json' not in args.model_path:
-        model_path = os.path.join(args.model_path, 'config_copy.json')
+        model_path = os.path.join(args.model_path, 'config.json')
+        # model_path = os.path.join(args.model_path, 'config_copy.json')
     else:
         model_path = args.model_path
     
@@ -65,9 +64,10 @@ def read_json_and_print_topk(args):
 
     if 'topk_list' not in data:
         raise KeyError("topk_list hasn't been initialized")
+
+    data['topk_list'] = get_topk_list(args, data['num_hidden_layers']-1)
     
-    data['topk_list'] = get_topk_list(args, data['num_hidden_layers'])
-    
+    print(model_path)
     print(len(data['topk_list']))
     print(data['topk_list'])
     
