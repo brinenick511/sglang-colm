@@ -1,18 +1,18 @@
 model_path=/new_data/yanghq/models/deepseek-ai/DeepSeek-V2-Lite
-gpuid=1
+gpuid=0
 
 # model_path=/new_data/yanghq/models/deepseek-ai/DeepSeek-V2-Lite-Chat
 # gpuid=6,7
 
 model_path="${HOME}/$(echo "$model_path" | sed 's|^.*models/|models/|')"
 
-# method=linear
-# args="2"
+method=uniform
+args="2"
 
-# python scripts/utils/modify_config.py \
-#     --model_path ${model_path} \
-#     --method ${method} \
-#     --args ${args}
+python scripts/utils/modify_config.py \
+    --model_path ${model_path} \
+    --method ${method} \
+    --args ${args}
 
 
 tasks=arc_challenge,arc_easy,boolq,openbookqa,rte,winogrande
@@ -25,13 +25,15 @@ model_args=${model_args},mem_fraction_static=0.7
 # model_args=${model_args},
 
 # HF_DATASETS_TRUST_REMOTE_CODE=True \
+HF_DATASETS_OFFLINE=1 \
+HF_HUB_OFFLINE=1 \
 CUDA_VISIBLE_DEVICES=$gpuid \
 lm_eval --model sglang \
     --model_args ${model_args} \
     --tasks ${tasks} \
-    --batch_size 1028 \
+    --batch_size 32 \
     --trust_remote_code \
     --num_fewshot 0 \
     --output_path ${HOME}/data/lme/ \
-    --limit 512 \
+    --limit 64 \
 

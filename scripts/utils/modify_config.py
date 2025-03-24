@@ -87,7 +87,7 @@ def read_json_and_print_topk(args):
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"file {model_path} doesn't exist!")
 
-    wait_for_time_gap()
+    # wait_for_time_gap()
 
     with open(model_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
@@ -104,7 +104,7 @@ def read_json_and_print_topk(args):
     with open(model_path, 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=2)
     
-    write_log(args.args)
+    # write_log(args.args)
 
 
 if __name__ == "__main__":

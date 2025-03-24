@@ -1,14 +1,16 @@
 
 request_rate_list=(1 2 4 8 )
 
+dataset_path=/root/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered/ShareGPT_V3_unfiltered_cleaned_split.json
+output_path=/root/data/sglang-benchmark/tp2.jsonl
+
 for request_rate in ${request_rate_list[@]}
 do
     num_prompt=$((300*${request_rate}))
     echo ${request_rate}
     echo ${num_prompt}
 
-    dataset_path=/root/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered/ShareGPT_V3_unfiltered_cleaned_split.json
-    output_path=/root/data/sglang-benchmark/tp2.jsonl
+
 
     python3 -m sglang.bench_serving \
         --backend sglang \
